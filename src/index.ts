@@ -1,7 +1,10 @@
-import "dotenv/config";
+import "./configs/env.config.js";
+import routeConfig from "./configs/route.config.js";
+
 import { createServer } from "http";
 import express, { Request, Response } from "express";
 import cors from "cors";
+
 import DatabaseManager from "./managers/database.manager.js";
 import EmailManager from "./managers/email.manager.js";
 import StorageManager from "./managers/storage.manager.js";
@@ -14,16 +17,15 @@ import type { StorageDriver } from "./managers/storage.manager.js";
 import type { CacheDriver } from "./managers/cache.manager.js";
 import type { QueueDriver } from "./managers/queue.manager.js";
 import type { SocketDriver } from "./managers/socket.manager.js";
-import routeConfig from "./configs/route.config.js";
 
 const app = express();
 const router = express.Router();
 const server = createServer(app);
+const PORT = process.env.BACKEND_PORT ?? 3000;
 
-const PORT = process.env.PORT ?? 3000;
 const TARGET_DATABASE = (process.env["TARGET_DATABASE"] ?? "psql") as DatabaseDriver;
 const TARGET_EMAIL = (process.env["TARGET_EMAIL"] ?? "nodemailer") as EmailDriver;
-const TARGET_STORAGE = (process.env["TARGET_STORAGE"] ?? "cloudinary") as StorageDriver;
+const TARGET_STORAGE = (process.env["TARGET_STORAGE"] ?? "local") as StorageDriver;
 const TARGET_CACHE = (process.env["TARGET_CACHE"] ?? "redis") as CacheDriver;
 const TARGET_QUEUE = (process.env["TARGET_QUEUE"] ?? "bullmq") as QueueDriver;
 const TARGET_SOCKET = (process.env["TARGET_SOCKET"] ?? "socketio") as SocketDriver;
@@ -58,7 +60,6 @@ app.get("/", (_req, res) => {
 
 app.post("/reconnect", async (_req: Request, res: Response) => {
     const results: Record<string, string> = {};
-
     const services: Array<{ name: string; fn: () => Promise<void> }> = [
         {
             name: "database",

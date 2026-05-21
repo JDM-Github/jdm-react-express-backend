@@ -13,7 +13,10 @@ import {
     UrlOptions,
 } from "../../templates/storage.template.js";
 
-const BASE_URL = process.env["LOCAL_STORAGE_BASE_URL"] ?? "http://localhost:3000";
+const MODE = process.env["MODE"] ?? "development";
+const BACKEND_PORT = MODE === "deployed" ? "" : process.env["BACKEND_PORT"] ?? "3000";
+const BACKEND_CURL = MODE === "deployed" ? process.env["DEPLOYED_BACKEND_URL"] ?? "" : "http://localhost:";
+const BASE_URL = `${BACKEND_CURL}${BACKEND_PORT}`;
 const UPLOAD_ROOT = process.env["LOCAL_STORAGE_PATH"] ?? "uploads";
 
 export class LocalStorage extends StorageTemplate {
