@@ -2,7 +2,8 @@ import { Server as HttpServer } from "http";
 import { Server as SocketIOServer, Socket } from "socket.io";
 import { SocketTemplate, SocketResult, RoomResult, SocketHandler } from "../../templates/socket.template.js";
 
-const CLIENT_URL = process.env["CLIENT_URL"] ?? "http://localhost:5173";
+const CLIENT_PORT = process.env["CLIENT_PORT"] ?? "5173";
+const CLIENT_URL = process.env["CLIENT_URL"] ?? `http://localhost:${CLIENT_PORT}`;
 
 export class SocketIOSocket extends SocketTemplate {
     protected driverName = "socketio";

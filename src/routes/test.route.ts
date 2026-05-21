@@ -43,53 +43,53 @@ class TestRoute {
     private getRoutes(): void {
         // basic
         this.router.get("/", require_access, authenticate, authorize("admin", "user"), getTest);
-        this.router.get("/:number", require_access, authenticate, authorize("admin", "user"), getTest);
+        this.router.get("/:number", require_access, authenticate, authorize("admin") , getTest);
 
         // cache
-        this.router.get("/cache/:key", require_access, authenticate, getCache);
+        this.router.get("/cache/:key", require_access, getCache);
 
         // queue
-        this.router.get("/queue/:queue/:jobId", require_access, authenticate, getQueueStatus);
+        this.router.get("/queue/:queue/:jobId", require_access, getQueueStatus);
 
         // socket
-        this.router.get("/socket", require_access, authenticate, getSocket);
+        this.router.get("/socket", require_access, getSocket);
     }
 
     private postRoutes(): void {
         // basic
-        this.router.post("/", require_access, authenticate, postTest);
+        this.router.post("/", require_access, postTest);
 
         // email
-        this.router.post("/email", require_access, authenticate, postEmail);
+        this.router.post("/email", require_access, postEmail);
 
         // storage
-        this.router.post("/upload", require_access, authenticate, postUpload);
-        this.router.post("/upload/file", require_access, authenticate, Upload.single("file"), Upload.requireFile, postUploadFile);
-        this.router.post("/upload/files", require_access, authenticate, Upload.array("files"), Upload.requireFiles, postUploadFiles);
+        this.router.post("/upload", require_access, postUpload);
+        this.router.post("/upload/file", require_access, Upload.single("file"), Upload.requireFile, postUploadFile);
+        this.router.post("/upload/files", require_access, Upload.array("files"), Upload.requireFiles, postUploadFiles);
 
         // cache
-        this.router.post("/cache", require_access, authenticate, postCache);
+        this.router.post("/cache", require_access, postCache);
 
         // queue
-        this.router.post("/queue", require_access, authenticate, postQueue);
+        this.router.post("/queue", require_access, postQueue);
 
         // socket
-        this.router.post("/socket/broadcast", require_access, authenticate, postSocketBroadcast);
-        this.router.post("/socket/emit", require_access, authenticate, postSocketEmit);
-        this.router.post("/socket/room", require_access, authenticate, postSocketRoom);
+        this.router.post("/socket/broadcast", require_access, postSocketBroadcast);
+        this.router.post("/socket/emit", require_access, postSocketEmit);
+        this.router.post("/socket/room", require_access, postSocketRoom);
     }
 
     private putRoutes(): void { }
     private deleteRoutes(): void {
         // storage
-        this.router.delete("/upload/:folder/:id", require_access, authenticate, deleteUpload);
+        this.router.delete("/upload/:folder/:id", require_access, deleteUpload);
 
         // cache
-        this.router.delete("/cache/:key", require_access, authenticate, deleteCache);
-        this.router.delete("/cache", require_access, authenticate, flushCache);
+        this.router.delete("/cache/:key", require_access, deleteCache);
+        this.router.delete("/cache", require_access, flushCache);
 
         // queue
-        this.router.delete("/queue/:queue/:jobId", require_access, authenticate, deleteQueue);
+        this.router.delete("/queue/:queue/:jobId", require_access, deleteQueue);
     }
 
     private patchRoutes(): void { }

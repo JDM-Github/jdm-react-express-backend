@@ -1,13 +1,15 @@
 import { StorageTemplate, UploadResult, DeleteResult, RenameResult, FileInfo, UploadOptions, UrlOptions } from "../templates/storage.template.js";
 import { CloudinaryStorage } from "./storages/cloudinary.storage.js";
+import { LocalStorage } from "./storages/local.storage.js";
 
-export type StorageDriver = "cloudinary";
+export type StorageDriver = "cloudinary" | "local";
 
 class StorageManager {
     private drivers: Map<StorageDriver, StorageTemplate> = new Map();
 
     constructor() {
         this.drivers.set("cloudinary", new CloudinaryStorage());
+        this.drivers.set("local", new LocalStorage());
         // this.drivers.set("s3",                new S3Storage());
         // this.drivers.set("supabase",          new SupabaseStorage());
         // this.drivers.set("cloudflare-r2",     new CloudflareR2Storage());
