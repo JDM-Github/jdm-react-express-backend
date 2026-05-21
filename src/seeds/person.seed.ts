@@ -4,9 +4,9 @@ import ManagerDatabase, { DatabaseDriver } from "../managers/database.manager.js
 
 export class PersonSeeder extends SeederTemplate {
     private seeds: PersonData[] = [
-        { name: "Alice Reyes", email: "alice@example.com", age: 28, active: true },
-        { name: "Bob Santos", email: "bob@example.com", age: 34, active: true },
-        { name: "Carol Manalo", email: "carol@example.com", age: 22, active: false },
+        { id: "1", name: "Alice Reyes", email: "alice@example.com", age: 28, active: true },
+        { id: "2", name: "Bob Santos", email: "bob@example.com", age: 34, active: true },
+        { id: "3", name: "Carol Manalo", email: "carol@example.com", age: 22, active: false },
     ];
 
     async run(driver: DatabaseDriver, fresh: boolean): Promise<void> {
