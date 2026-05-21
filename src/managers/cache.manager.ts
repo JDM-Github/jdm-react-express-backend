@@ -1,44 +1,16 @@
 import { CacheTemplate, CacheResult, DeleteResult } from "../templates/cache.template.js";
+import { ManagerTemplate } from "../templates/manager.template.js";
 import { RedisCache } from "./caches/redis.cache.js";
 
 export type CacheDriver = "redis";
 
-class CacheManager {
-    private drivers: Map<CacheDriver, CacheTemplate> = new Map();
+class CacheManager extends ManagerTemplate<CacheDriver, CacheTemplate> {
+    protected label = "CacheManager";
 
     constructor() {
+        super();
         this.drivers.set("redis", new RedisCache());
-        // this.drivers.set("memcached", new MemcachedCache());
-        // this.drivers.set("memory",    new MemoryCache());
     }
-
-    // ── Resolve (auto-reconnects) ─────────────────────────────────────────────
-
-    private async resolve(driver: CacheDriver): Promise<CacheTemplate> {
-        const cache = this.drivers.get(driver);
-        if (!cache) throw new Error(`[CacheManager] Unknown driver: "${driver}"`);
-
-        if (!cache.isConnected()) {
-            console.warn(`[CacheManager] Driver "${driver}" not connected. Reconnecting...`);
-            await cache.connect();
-        }
-
-        return cache;
-    }
-
-    // ── Lifecycle ─────────────────────────────────────────────────────────────
-
-    async connect(driver: CacheDriver): Promise<void> {
-        const cache = this.drivers.get(driver);
-        if (!cache) throw new Error(`[CacheManager] Unknown driver: "${driver}"`);
-        await cache.connect();
-    }
-
-    async disconnect(driver: CacheDriver): Promise<void> {
-        await this.drivers.get(driver)?.disconnect();
-    }
-
-    // ── Cache API ─────────────────────────────────────────────────────────────
 
     async get(driver: CacheDriver, key: string): Promise<CacheResult> {
         return (await this.resolve(driver)).get(key);
