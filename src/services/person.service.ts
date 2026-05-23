@@ -1,9 +1,10 @@
+import Config from "../configs/env.config.js";
 import ManagerDatabase from "../managers/database.manager.js";
 import { PersonModel } from "../models/person.model.js";
 import { signToken } from "../utils/jwt.js";
 import type { DatabaseDriver } from "../managers/database.manager.js";
 
-const TARGET = (process.env["TARGET_DATABASE"] ?? "psql") as DatabaseDriver;
+const TARGET = Config.TARGET_DATABASE as DatabaseDriver;
 
 class PersonService {
 

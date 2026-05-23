@@ -1,13 +1,6 @@
+import Config from "../../configs/env.config.js";
 import { Queue, Worker, Job, ConnectionOptions } from "bullmq";
 import { QueueTemplate, JobResult, JobStatus, JobOptions, JobHandler } from "../../templates/queue.template.js";
-
-const ENV_MAP: Record<string, string> = {
-    development: process.env["QUEUE_DEVELOPMENT"] ?? "redis://localhost:6379",
-    production: process.env["QUEUE_PRODUCTION"] ?? "",
-    deployed: process.env["QUEUE_DEPLOYED"] ?? "",
-};
-
-const MODE = process.env["MODE"] ?? "development";
 
 export class BullMQQueue extends QueueTemplate {
     protected driverName = "bullmq";
@@ -17,8 +10,8 @@ export class BullMQQueue extends QueueTemplate {
     private connected = false;
 
     async connect(): Promise<void> {
-        const url = ENV_MAP[MODE];
-        if (!url) throw new Error(`[BullMQQueue] No connection URL for mode: ${MODE}`);
+        const url = Config.BULLMQ_QUEUE_URL;
+        if (!url) throw new Error(`[BullMQQueue] No connection URL for mode: ${Config.MODE}`);
 
         const parsed = new URL(url);
         this.connection = {

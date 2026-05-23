@@ -1,11 +1,12 @@
+import Config from "../../configs/env.config.js";
 import { Server as HttpServer } from "http";
 import { Server as SocketIOServer, Socket } from "socket.io";
 import { SocketTemplate, SocketResult, RoomResult, SocketHandler } from "../../templates/socket.template.js";
 
-const MODE = process.env["MODE"] ?? "development";
-const CLIENT_PORT = MODE === "deployed" ? "" : process.env["CLIENT_PORT"] ?? "5173";
-const CLIENT_CURL = MODE === "deployed" ? process.env["DEPLOYED_FRONTEND_URL"] ?? "" : "http://localhost:";
-const CLIENT_URL = `${CLIENT_CURL}${CLIENT_PORT}`;
+const CORS_ORIGIN =
+    Config.MODE === "development" || Config.MODE === "production"
+        ? `http://localhost:${Config.CLIENT_PORT}`
+        : false;
 
 export class SocketIOSocket extends SocketTemplate {
     protected driverName = "socketio";
@@ -15,10 +16,9 @@ export class SocketIOSocket extends SocketTemplate {
 
     async connect(server: HttpServer): Promise<void> {
         this.io = new SocketIOServer(server, {
-            cors: {
-                origin: CLIENT_URL,
-                methods: ["GET", "POST"],
-            },
+            cors: CORS_ORIGIN
+                ? { origin: CORS_ORIGIN, methods: ["GET", "POST"] }
+                : {},
         });
 
         this.io.on("connection", (socket: Socket) => {

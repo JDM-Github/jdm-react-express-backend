@@ -1,3 +1,4 @@
+import Config from "../../configs/env.config.js";
 import { Sequelize, DataTypes, Model, ModelStatic, ModelAttributeColumnOptions, ModelAttributes } from "sequelize";
 import {
     DatabaseTemplate,
@@ -7,13 +8,6 @@ import {
     SingleResult,
 } from "../../templates/database.template.js";
 import { DataOf, ModelTemplate } from "../../templates/model.template.js";
-
-const ENV_MAP: Record<string, string> = {
-    development: process.env["PSQL_DATABASE_DEVELOPMENT"] ?? "",
-    production: process.env["PSQL_DATABASE_PRODUCTION"] ?? "",
-    deployed: process.env["PSQL_DATABASE_DEPLOYED"] ?? "",
-};
-const MODE = process.env["MODE"] ?? "development";
 
 class PSQLFetchBuilder<T extends object> implements FetchBuilder<T> {
     private sequelizeModel: ModelStatic<Model>;
@@ -121,17 +115,17 @@ export class PSQLDatabase extends DatabaseTemplate {
     private connected = false;
 
     async connect(): Promise<void> {
-        const url = ENV_MAP[MODE];
-        if (!url) throw new Error(`[PSQLDatabase] No connection URL for mode: ${MODE}`);
+        const url = Config.PSQL_DATABASE;
+        if (!url) throw new Error(`[PSQLDatabase] No connection URL for mode: ${Config.MODE}`);
 
         this.sequelize = new Sequelize(url, {
             dialect: "postgres",
-            logging: MODE === "development" ? console.log : false,
+            logging: Config.MODE === "development" ? console.log : false,
         });
 
         await this.sequelize.authenticate();
         this.connected = true;
-        console.log(`[PSQLDatabase] Connected (${MODE})`);
+        console.log(`[PSQLDatabase] Connected (${Config.MODE})`);
     }
 
     async disconnect(): Promise<void> {

@@ -17,6 +17,7 @@ const ENV_MAP: Record<string, string> = {
     dev: "development",
     prod: "production",
     dep: "deployed",
+    elec: "electron",
 };
 
 const resolvedEnv = ENV_MAP[env ?? "dev"] ?? "development";

@@ -1,3 +1,4 @@
+import Config from "../configs/env.config.js";
 import type { Request, Response, NextFunction } from "express";
 import { error } from "../utils/responses.js";
 
@@ -17,7 +18,7 @@ export const require_access = (
     }
 
     const token = authHeader.split(" ")[1]?.trim();
-    const expected = process.env.API_ACCESS;
+    const expected = Config.API_ACCESS;
 
     if (!expected) {
         return error(

@@ -1,11 +1,12 @@
+import Config from "../../configs/env.config.js";
 import nodemailer, { Transporter } from "nodemailer";
 import { EmailTemplate, EmailPayload, SendResult } from "../../templates/email.template.js";
 
-const HOST = process.env["NODEMAILER_EMAIL_SMTP_HOST"] ?? "smtp.gmail.com";
-const PORT = parseInt(process.env["NODEMAILER_EMAIL_SMTP_PORT"] ?? "587");
-const USER = process.env["NODEMAILER_EMAIL_SMTP_USER"] ?? "";
-const PASS = process.env["NODEMAILER_EMAIL_SMTP_PASS"] ?? "";
-const FROM = process.env["NODEMAILER_EMAIL_FROM"] ?? USER;
+const HOST = Config.NODEMAILER_EMAIL_SMTP_HOST;
+const PORT = Config.NODEMAILER_EMAIL_SMTP_PORT;
+const USER = Config.NODEMAILER_EMAIL_SMTP_USER;
+const PASS = Config.NODEMAILER_EMAIL_SMTP_PASS;
+const FROM = Config.NODEMAILER_EMAIL_FROM;
 
 export class NodemailerEmail extends EmailTemplate {
     protected driverName = "nodemailer";

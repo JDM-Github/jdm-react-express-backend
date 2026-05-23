@@ -1,8 +1,9 @@
+import Config from "../../configs/env.config.js";
 import { Resend } from "resend";
 import { EmailTemplate, EmailPayload, SendResult } from "../../templates/email.template.js";
 
-const API_KEY = process.env["RESEND_EMAIL_API_KEY"] ?? "";
-const FROM = process.env["RESEND_EMAIL_FROM"] ?? "onboarding@resend.dev";
+const API_KEY = Config.RESEND_EMAIL_API_KEY;
+const FROM = Config.RESEND_EMAIL_FROM
 
 export class ResendEmail extends EmailTemplate {
     protected driverName = "resend";

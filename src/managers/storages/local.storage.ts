@@ -1,4 +1,4 @@
-// storages/local.storage.ts
+import Config from "../../configs/env.config.js";
 import fs from "fs/promises";
 import fsSync from "fs";
 import path from "path";
@@ -13,11 +13,10 @@ import {
     UrlOptions,
 } from "../../templates/storage.template.js";
 
-const MODE = process.env["MODE"] ?? "development";
-const BACKEND_PORT = MODE === "deployed" ? "" : process.env["BACKEND_PORT"] ?? "3000";
-const BACKEND_CURL = MODE === "deployed" ? process.env["DEPLOYED_BACKEND_URL"] ?? "" : "http://localhost:";
+const BACKEND_PORT = Config.MODE === "deployed" ? "" : Config.BACKEND_PORT;
+const BACKEND_CURL = Config.MODE === "deployed" ? Config.DEPLOYED_BACKEND_URL : "http://localhost:";
 const BASE_URL = `${BACKEND_CURL}${BACKEND_PORT}`;
-const UPLOAD_ROOT = process.env["LOCAL_STORAGE_PATH"] ?? "uploads";
+const UPLOAD_ROOT = Config.LOCAL_STORAGE_PATH;
 
 export class LocalStorage extends StorageTemplate {
     protected driverName = "local";

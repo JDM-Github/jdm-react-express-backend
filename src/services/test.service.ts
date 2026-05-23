@@ -1,3 +1,4 @@
+import Config from "../configs/env.config.js";
 import { JwtPayload } from "../utils/jwt.js";
 import EmailManager from "../managers/email.manager.js";
 import StorageManager from "../managers/storage.manager.js";
@@ -10,11 +11,11 @@ import type { CacheDriver } from "../managers/cache.manager.js";
 import type { QueueDriver } from "../managers/queue.manager.js";
 import type { SocketDriver } from "../managers/socket.manager.js";
 
-const TARGET_EMAIL = (process.env["TARGET_EMAIL"] ?? "nodemailer") as EmailDriver;
-const TARGET_STORAGE = (process.env["TARGET_STORAGE"] ?? "cloudinary") as StorageDriver;
-const TARGET_CACHE = (process.env["TARGET_CACHE"] ?? "redis") as CacheDriver;
-const TARGET_QUEUE = (process.env["TARGET_QUEUE"] ?? "bullmq") as QueueDriver;
-const TARGET_SOCKET = (process.env["TARGET_SOCKET"] ?? "socketio") as SocketDriver;
+const TARGET_EMAIL = Config.TARGET_EMAIL as EmailDriver;
+const TARGET_STORAGE = Config.TARGET_STORAGE as StorageDriver;
+const TARGET_CACHE = Config.TARGET_CACHE as CacheDriver;
+const TARGET_QUEUE = Config.TARGET_QUEUE as QueueDriver;
+const TARGET_SOCKET = Config.TARGET_SOCKET as SocketDriver;
 
 interface GetTestResult {
     timestamp: string;

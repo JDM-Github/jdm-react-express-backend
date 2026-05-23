@@ -1,14 +1,7 @@
+import Config from "../../configs/env.config.js";
 import Redis from "ioredis";
 import type { Redis as RedisType } from "ioredis";
 import { CacheTemplate, CacheResult, DeleteResult } from "../../templates/cache.template.js";
-
-const ENV_MAP: Record<string, string> = {
-    development: process.env["CACHE_DEVELOPMENT"] ?? "redis://localhost:6379",
-    production: process.env["CACHE_PRODUCTION"] ?? "",
-    deployed: process.env["CACHE_DEPLOYED"] ?? "",
-};
-
-const MODE = process.env["MODE"] ?? "development";
 
 export class RedisCache extends CacheTemplate {
     protected driverName = "redis";
@@ -16,8 +9,8 @@ export class RedisCache extends CacheTemplate {
     private connected = false;
 
     async connect(): Promise<void> {
-        const url = ENV_MAP[MODE];
-        if (!url) throw new Error(`[RedisCache] No connection URL for mode: ${MODE}`);
+        const url = Config.REDIS_CACHE_URL;
+        if (!url) throw new Error(`[RedisCache] No connection URL for mode: ${Config.MODE}`);
 
         const RedisClient = (Redis as any).default ?? Redis;
         this.client = new RedisClient(url);

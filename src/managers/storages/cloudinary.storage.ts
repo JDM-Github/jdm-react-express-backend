@@ -1,9 +1,10 @@
+import Config from "../../configs/env.config.js";
 import { v2 as cloudinary, UploadApiResponse } from "cloudinary";
 import { StorageTemplate, UploadResult, DeleteResult, RenameResult, FileInfo, UploadOptions, UrlOptions } from "../../templates/storage.template.js";
 
-const CLOUD_NAME = process.env["CLOUDINARY_CLOUD_NAME"] ?? "";
-const API_KEY = process.env["CLOUDINARY_API_KEY"] ?? "";
-const API_SECRET = process.env["CLOUDINARY_API_SECRET"] ?? "";
+const CLOUD_NAME = Config.CLOUDINARY_CLOUD_NAME;
+const API_KEY = Config.CLOUDINARY_API_KEY;
+const API_SECRET = Config.CLOUDINARY_API_SECRET;
 
 export class CloudinaryStorage extends StorageTemplate {
     protected driverName = "cloudinary";

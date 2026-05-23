@@ -1,9 +1,11 @@
-import "./configs/env.config.js";
+import Config from "./configs/env.config.js";
 import routeConfig from "./configs/route.config.js";
 
 import { createServer } from "http";
 import express, { Request, Response } from "express";
 import cors from "cors";
+import path from "path";
+import { fileURLToPath } from "url";
 
 import DatabaseManager from "./managers/database.manager.js";
 import EmailManager from "./managers/email.manager.js";
@@ -18,21 +20,33 @@ import type { CacheDriver } from "./managers/cache.manager.js";
 import type { QueueDriver } from "./managers/queue.manager.js";
 import type { SocketDriver } from "./managers/socket.manager.js";
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const app = express();
 const router = express.Router();
 const server = createServer(app);
-const PORT = process.env.BACKEND_PORT ?? 3000;
+const PORT = Config.BACKEND_PORT ?? 3000;
 
-const TARGET_DATABASE = (process.env["TARGET_DATABASE"] ?? "psql") as DatabaseDriver;
-const TARGET_EMAIL = (process.env["TARGET_EMAIL"] ?? "nodemailer") as EmailDriver;
-const TARGET_STORAGE = (process.env["TARGET_STORAGE"] ?? "local") as StorageDriver;
-const TARGET_CACHE = (process.env["TARGET_CACHE"] ?? "redis") as CacheDriver;
-const TARGET_QUEUE = (process.env["TARGET_QUEUE"] ?? "bullmq") as QueueDriver;
-const TARGET_SOCKET = (process.env["TARGET_SOCKET"] ?? "socketio") as SocketDriver;
+const IS_LOCAL = Config.MODE === "development" || Config.MODE === "production";
+
+const TARGET_DATABASE = Config.TARGET_DATABASE as DatabaseDriver;
+const TARGET_EMAIL = Config.TARGET_EMAIL as EmailDriver;
+const TARGET_STORAGE = Config.TARGET_STORAGE as StorageDriver;
+const TARGET_CACHE = Config.TARGET_CACHE as CacheDriver;
+const TARGET_QUEUE = Config.TARGET_QUEUE as QueueDriver;
+const TARGET_SOCKET = Config.TARGET_SOCKET as SocketDriver;
 
 // ── Middleware ────────────────────────────────────────────────────────────────
 
-app.use(cors());
+if (IS_LOCAL) {
+    app.use(cors({
+        origin: `http://localhost:${Config.CLIENT_PORT}`,
+        methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+        credentials: true,
+    }));
+}
+
 app.use(express.json());
 app.use("/api", router);
 
@@ -48,7 +62,7 @@ async function registerRoutes(): Promise<void> {
 
 // ── Health check ──────────────────────────────────────────────────────────────
 
-app.get("/", (_req, res) => {
+app.get("/health", (_req, res) => {
     res.json({
         status: "ok",
         message: "Server is running",
@@ -140,6 +154,17 @@ function registerSocketEvents(): void {
     });
 }
 
+// ── Static (non-local modes: deployed / electron) ────────────────────────────
+
+function registerStatic(): void {
+    const clientDir = path.join(__dirname, "./client");
+    app.use(express.static(clientDir));
+    app.get("*", (_req, res) => {
+        res.sendFile(path.join(clientDir, "index.html"));
+    });
+    console.log(`[Static] Serving frontend from ${clientDir}`);
+}
+
 // ── Bootstrap ─────────────────────────────────────────────────────────────────
 
 async function bootstrap(): Promise<void> {
@@ -153,8 +178,10 @@ async function bootstrap(): Promise<void> {
 
     registerWorkers();
     registerSocketEvents();
+    if (!IS_LOCAL) registerStatic();
+
     server.listen(PORT, () => {
-        console.log(`Server running at http://localhost:${PORT}`);
+        console.log(`[Server] Running at http://localhost:${PORT} (${Config.MODE})`);
     });
 }
 

@@ -1,7 +1,8 @@
+import Config from "../configs/env.config.js";
 import SocketManager from "../managers/socket.manager.js";
 import type { SocketDriver } from "../managers/socket.manager.js";
 
-const TARGET_SOCKET = (process.env["TARGET_SOCKET"] ?? "socketio") as SocketDriver;
+const TARGET_SOCKET = Config.TARGET_SOCKET as SocketDriver;
 
 class SocketService {
 
